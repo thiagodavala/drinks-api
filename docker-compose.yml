@@ -6,8 +6,8 @@ services:
     environment:
       MYSQL_DATABASE: 'drinks'
       MYSQL_USER: 'sistema'
-      MYSQL_PASSWORD: 'senha4321'
-      MYSQL_ROOT_PASSWORD: 'senha'
+      MYSQL_PASSWORD: ''
+      MYSQL_ROOT_PASSWORD: ''
     ports:
       - '3306:3306'
     expose:
@@ -22,7 +22,7 @@ services:
     build: .
     environment:
       DB_HOSTNAME: 'localhost'
-      DB_PASSWORD: 'senha4321'
+      DB_PASSWORD: ''
       DB_USER: 'sistema'
       DB_DATABASE: 'drinks'
     ports:
