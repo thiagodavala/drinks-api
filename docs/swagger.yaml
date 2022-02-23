@@ -1,0 +1,16 @@
+basePath: /
+info:
+  contact: {}
+paths:
+  /cocktails:
+    get:
+      consumes:
+      - application/json
+      description: List IBA Cocktails
+      produces:
+      - application/json
+      responses: {}
+      summary: cocktails API List
+      tags:
+      - example
+swagger: "2.0"
