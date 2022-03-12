@@ -16,11 +16,11 @@ import (
 )
 
 type cocktail struct {
-	ID          int    `json:"id"`
-	Name        string `json:"name"`
-	Ingredients string `json:"ingredients"`
-	Method      string `json:"method"`
-	Garnish     string `json:"garnish"`
+	ID          int    `json:"Id"`
+	Name        string `json:"Name"`
+	Ingredients string `json:"Ingredients"`
+	Method      string `json:"Method"`
+	Garnish     string `json:"Garnish"`
 }
 
 // @BasePath /
@@ -28,15 +28,15 @@ type cocktail struct {
 func main() {
 	router := gin.Default()
 	router.GET("/cocktails", getCocktails)
+	router.GET("/cocktail/:id", getCocktailById)
+	router.POST("/cocktail", addCocktail)
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
-	router.Run("localhost:8080")
+	router.Run(":8080")
 }
 
-// IBA Cocktails API List
-// @Summary cocktails API List
+// @Summary List Cocktails
 // @Schemes
 // @Description List IBA Cocktails
-// @Tags example
 // @Accept json
 // @Produce json
 // @Router /cocktails [get]
@@ -72,4 +72,62 @@ func getCocktails(c *gin.Context) {
 		list = append(list, item)
 	}
 	c.IndentedJSON(http.StatusOK, list)
+}
+
+// @Summary get Cocktail by Id
+// @Schemes
+// @Description get one IBA Cocktail
+// @Accept json
+// @Produce json
+// @Router /cocktail [get]
+func getCocktailById(c *gin.Context) {
+
+}
+
+// @Summary Add Cocktail
+// @Schemes
+// @Description Add IBA Cocktail
+// @Param cocktail formData cocktail true "Object Cocktail"
+// @Accept application/json
+// @Produce application/json
+// @Router /cocktail [post]
+func addCocktail(c *gin.Context) {
+	var ck cocktail
+
+	if err := c.BindJSON(&ck); err != nil {
+		c.AbortWithStatus(http.StatusBadRequest)
+	} else {
+		addCocktailDB(ck)
+		c.IndentedJSON(http.StatusCreated, ck)
+	}
+}
+
+func addCocktailDB(cocktail cocktail) {
+
+	hostname := os.Getenv("DB_HOSTNAME")
+	password := os.Getenv("DB_PASSWORD")
+	user := os.Getenv("DB_USER")
+	database := os.Getenv("DB_DATABASE")
+
+	db, err := sql.Open("mysql", user+":"+password+"@tcp("+hostname+":3306)/"+database)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	// defer the close till after this function has finished
+	// executing
+	defer db.Close()
+
+	insert, err := db.Query(
+		"INSERT INTO cocktails (name,ingredients,method,garnish) VALUES (?,?,?,?)",
+		cocktail.Name, cocktail.Ingredients, cocktail.Method, cocktail.Garnish)
+
+	// if there is an error inserting, handle it
+	if err != nil {
+		panic(err.Error())
+	}
+
+	defer insert.Close()
+
 }

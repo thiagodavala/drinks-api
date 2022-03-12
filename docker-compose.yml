@@ -1,4 +1,4 @@
-version: '3.3'
+version: '3.5'
 services:
   db:
     image: mysql:5.7
@@ -10,23 +10,21 @@ services:
       MYSQL_ROOT_PASSWORD: 'senha'
     ports:
       - '3306:3306'
-    expose:
-      - '3306'
     volumes:
       - my-db:/var/lib/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
              --default-authentication-plugin=mysql_native_password
-             --init-file /docker-entrypoint-initdb.d/init.sql
-  app:
-    build: .
-    environment:
-      DB_HOSTNAME: 'localhost'
-      DB_PASSWORD: 'senha4321'
-      DB_USER: 'sistema'
-      DB_DATABASE: 'drinks'
-    ports:
-      - "80:8080"
+             --init-file /docker-entrypoint-initdb.d/init.sql 
+  # app:
+  #   build: .
+  #   environment:
+  #     DB_HOSTNAME: db
+  #     DB_PASSWORD: 'senha4321'
+  #     DB_USER: 'sistema'
+  #     DB_DATABASE: 'drinks'
+  #   ports:
+  #     - "8080:8080"
 
 volumes:
   my-db:

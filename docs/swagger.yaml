@@ -2,6 +2,39 @@ basePath: /
 info:
   contact: {}
 paths:
+  /cocktail:
+    get:
+      consumes:
+      - application/json
+      description: get one IBA Cocktail
+      produces:
+      - application/json
+      responses: {}
+      summary: get Cocktail by Id
+    post:
+      consumes:
+      - application/json
+      description: Add IBA Cocktail
+      parameters:
+      - in: formData
+        name: garnish
+        type: string
+      - in: formData
+        name: id
+        type: integer
+      - in: formData
+        name: ingredients
+        type: string
+      - in: formData
+        name: method
+        type: string
+      - in: formData
+        name: name
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Add Cocktail
   /cocktails:
     get:
       consumes:
@@ -10,7 +43,5 @@ paths:
       produces:
       - application/json
       responses: {}
-      summary: cocktails API List
-      tags:
-      - example
+      summary: List Cocktails
 swagger: "2.0"

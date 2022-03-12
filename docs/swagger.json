@@ -5,6 +5,57 @@
     },
     "basePath": "/",
     "paths": {
+        "/cocktail": {
+            "get": {
+                "description": "get one IBA Cocktail",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get Cocktail by Id",
+                "responses": {}
+            },
+            "post": {
+                "description": "Add IBA Cocktail",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Add Cocktail",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "garnish",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "id",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "ingredients",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "method",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "name",
+                        "in": "formData"
+                    }
+                ],
+                "responses": {}
+            }
+        },
         "/cocktails": {
             "get": {
                 "description": "List IBA Cocktails",
@@ -14,10 +65,7 @@
                 "produces": [
                     "application/json"
                 ],
-                "tags": [
-                    "example"
-                ],
-                "summary": "cocktails API List",
+                "summary": "List Cocktails",
                 "responses": {}
             }
         }
