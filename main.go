@@ -19,6 +19,9 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
+// @securityDefinitions.apikey
+// @in header
+// @name Authorization
 // @BasePath /
 func main() {
 	router := gin.Default()
@@ -84,6 +87,8 @@ func validateUser(user models.User) string {
 // @Description List IBA Cocktails
 // @Accept json
 // @Produce json
+// @param Authorization header string true "Authorization"
+// @Security Bearer
 // @Router /cocktails/:id [get]
 func getCocktails(c *gin.Context) {
 	cocktails := models.GetAllCocktails()
@@ -101,6 +106,8 @@ func getCocktails(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id query int true "Id cocktail"
+// @param Authorization header string true "Authorization"
+// @Security Bearer
 // @Router /cocktail:id [get]
 func getCocktailById(c *gin.Context) {
 
@@ -119,8 +126,10 @@ func getCocktailById(c *gin.Context) {
 // @Schemes
 // @Description Add IBA Cocktail
 // @Param cocktail formData models.Cocktail true "Object Cocktail"
+// @param Authorization header string true "Authorization"
 // @Accept application/json
 // @Produce application/json
+// @Security Bearer
 // @Router /cocktail [put]
 func addCocktail(c *gin.Context) {
 	var ck models.Cocktail
@@ -139,6 +148,8 @@ func addCocktail(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Param id query int true "Id cocktail"
+// @param Authorization header string true "Authorization"
+// @Security Bearer
 // @Router /cocktail:id [delete]
 func deleteCocktailById(c *gin.Context) {
 

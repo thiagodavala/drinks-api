@@ -18,6 +18,11 @@ const docTemplate = `{
     "paths": {
         "/cocktail": {
             "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Add IBA Cocktail",
                 "consumes": [
                     "application/json"
@@ -51,6 +56,13 @@ const docTemplate = `{
                         "type": "string",
                         "name": "Name",
                         "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Authorization",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {}
@@ -58,6 +70,11 @@ const docTemplate = `{
         },
         "/cocktail:id": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "get one IBA Cocktail",
                 "consumes": [
                     "application/json"
@@ -73,11 +90,23 @@ const docTemplate = `{
                         "name": "id",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Authorization",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {}
             },
             "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Delete One IBA Cocktail",
                 "consumes": [
                     "application/json"
@@ -93,6 +122,13 @@ const docTemplate = `{
                         "name": "id",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Authorization",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {}
@@ -100,6 +136,11 @@ const docTemplate = `{
         },
         "/cocktails/:id": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "List IBA Cocktails",
                 "consumes": [
                     "application/json"
@@ -108,6 +149,15 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "summary": "List Cocktails",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {}
             }
         },
@@ -123,7 +173,7 @@ const docTemplate = `{
                 "summary": "Login",
                 "parameters": [
                     {
-                        "type": "integer",
+                        "type": "string",
                         "name": "email",
                         "in": "formData"
                     },
@@ -135,6 +185,13 @@ const docTemplate = `{
                 ],
                 "responses": {}
             }
+        }
+    },
+    "securityDefinitions": {
+        "": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`

@@ -7,6 +7,11 @@
     "paths": {
         "/cocktail": {
             "put": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Add IBA Cocktail",
                 "consumes": [
                     "application/json"
@@ -40,6 +45,13 @@
                         "type": "string",
                         "name": "Name",
                         "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Authorization",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {}
@@ -47,6 +59,11 @@
         },
         "/cocktail:id": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "get one IBA Cocktail",
                 "consumes": [
                     "application/json"
@@ -62,11 +79,23 @@
                         "name": "id",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Authorization",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {}
             },
             "delete": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "Delete One IBA Cocktail",
                 "consumes": [
                     "application/json"
@@ -82,6 +111,13 @@
                         "name": "id",
                         "in": "query",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Authorization",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
                     }
                 ],
                 "responses": {}
@@ -89,6 +125,11 @@
         },
         "/cocktails/:id": {
             "get": {
+                "security": [
+                    {
+                        "Bearer": []
+                    }
+                ],
                 "description": "List IBA Cocktails",
                 "consumes": [
                     "application/json"
@@ -97,6 +138,15 @@
                     "application/json"
                 ],
                 "summary": "List Cocktails",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Authorization",
+                        "name": "Authorization",
+                        "in": "header",
+                        "required": true
+                    }
+                ],
                 "responses": {}
             }
         },
@@ -112,7 +162,7 @@
                 "summary": "Login",
                 "parameters": [
                     {
-                        "type": "integer",
+                        "type": "string",
                         "name": "email",
                         "in": "formData"
                     },
@@ -124,6 +174,13 @@
                 ],
                 "responses": {}
             }
+        }
+    },
+    "securityDefinitions": {
+        "": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }

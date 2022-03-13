@@ -23,9 +23,16 @@ paths:
       - in: formData
         name: Name
         type: string
+      - description: Authorization
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses: {}
+      security:
+      - Bearer: []
       summary: Add Cocktail
   /cocktail:id:
     delete:
@@ -38,9 +45,16 @@ paths:
         name: id
         required: true
         type: integer
+      - description: Authorization
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses: {}
+      security:
+      - Bearer: []
       summary: Delete Cocktail by Id
     get:
       consumes:
@@ -52,18 +66,33 @@ paths:
         name: id
         required: true
         type: integer
+      - description: Authorization
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses: {}
+      security:
+      - Bearer: []
       summary: get Cocktail by Id
   /cocktails/:id:
     get:
       consumes:
       - application/json
       description: List IBA Cocktails
+      parameters:
+      - description: Authorization
+        in: header
+        name: Authorization
+        required: true
+        type: string
       produces:
       - application/json
       responses: {}
+      security:
+      - Bearer: []
       summary: List Cocktails
   /login:
     post:
@@ -73,7 +102,7 @@ paths:
       parameters:
       - in: formData
         name: email
-        type: integer
+        type: string
       - in: formData
         name: password
         type: string
@@ -81,4 +110,9 @@ paths:
       - application/json
       responses: {}
       summary: Login
+securityDefinitions:
+  "":
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"
