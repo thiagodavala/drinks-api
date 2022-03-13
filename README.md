@@ -1,47 +1,73 @@
 # Drinks API
 
-## BD
+## GET /swagger
 
-```
-docker run --name mysql -p 3306:3306 -e MYSQL_ROOT_PASSWORD=senha -d mysql/mysql-server:latest
-```
-
-```
-docker exec -it mysql mysql -uroot -p
+```bash
+curl http://localhost:8080/swagger/index.html
 ```
 
-```
-CREATE USER 'sistema'@'localhost' IDENTIFIED BY 'senha';
-GRANT ALL PRIVILEGES ON * . * TO 'sistema'@'localhost';
-FLUSH PRIVILEGES;
+## GET /cocktails
+
+List Cocktails
+
+```bash
+curl -X 'GET' 'http://localhost:8080/cocktails'
 ```
 
-```
-create database drinks;
-use drinks;
+## GET /cocktail/id 
+
+Get Cocktail by Id
+
+```bash
+curl -X 'GET' 'http://localhost:8080/cocktail/1'
 ```
 
-```
-CREATE TABLE cocktails (
-id INT(6) UNSIGNED AUTO_INCREMENT PRIMARY KEY,
-name VARCHAR(30) NOT NULL,
-ingredients VARCHAR(256) NOT NULL,
-method VARCHAR(256) NOT NULL,
-garnish VARCHAR(256) NOT NULL);
+## PUT /cocktail
+
+Add Cocktail
+
+```bash
+curl -X PUT localhost:8080/cocktail -d '{"Name":"Negroni","Ingredients":"30 ml Gin, 30 ml Bitter Campari, 30 ml Sweet Red Vermouth","Method":"Pour all ingredients directly into a chilled old fashioned glass filled with ice, Stir gently.","Garnish":"Garnish with a half orange slice."}'
 ```
 
-```
-INSERT INTO cocktails (name, ingredients, method, garnish)
-VALUES ("Caipirinha", "60 ml Cachaça; 1 Lime cut into small wedges; 4 Teaspoons White Cane Sugar;", "Place lime and sugar into a double old fashioned glass and muddle gently. Fill the glass with cracked ice and add Cachaça. Stir gently to involve ingredients.","N/A");
+## DELETE /cocktail/id
+
+Add Cocktail
+
+```bash
+curl -X DELETE localhost:8080/cocktail/1
 ```
 
-## WEB API
+## POST /login
 
 ```
-go get -u github.com/gin-gonic/gie
+curl -X POST localhost:8080/login -d '{"Email":"Negroni","Password":"30 ml Gin"}'
+```
+
+## Start Project
+
+```
 go mod init drinks-api
 go mod tidy
+```
+
+## Run project
+
+1. Start BD
+
+```
+db/docker-compose up
+```
+
+2. Start app
+
+```
+go run main.go
+```
+
+## Update Swagger
+
+```
 go get -u github.com/swaggo/swag/cmd/swag
 swag init
 ```
-

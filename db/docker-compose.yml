@@ -6,8 +6,8 @@ services:
     environment:
       MYSQL_DATABASE: 'drinks'
       MYSQL_USER: 'sistema'
-      MYSQL_PASSWORD: ''
-      MYSQL_ROOT_PASSWORD: ''
+      MYSQL_PASSWORD: 'senha4321'
+      MYSQL_ROOT_PASSWORD: 'senha4321'
     ports:
       - '3306:3306'
     volumes:

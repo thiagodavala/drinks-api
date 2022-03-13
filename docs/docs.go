@@ -17,18 +17,7 @@ const docTemplate = `{
     "basePath": "{{.BasePath}}",
     "paths": {
         "/cocktail": {
-            "get": {
-                "description": "get one IBA Cocktail",
-                "consumes": [
-                    "application/json"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "summary": "get Cocktail by Id",
-                "responses": {}
-            },
-            "post": {
+            "put": {
                 "description": "Add IBA Cocktail",
                 "consumes": [
                     "application/json"
@@ -40,34 +29,76 @@ const docTemplate = `{
                 "parameters": [
                     {
                         "type": "string",
-                        "name": "garnish",
+                        "name": "Garnish",
                         "in": "formData"
                     },
                     {
                         "type": "integer",
-                        "name": "id",
+                        "name": "Id",
                         "in": "formData"
                     },
                     {
                         "type": "string",
-                        "name": "ingredients",
+                        "name": "Ingredients",
                         "in": "formData"
                     },
                     {
                         "type": "string",
-                        "name": "method",
+                        "name": "Method",
                         "in": "formData"
                     },
                     {
                         "type": "string",
-                        "name": "name",
+                        "name": "Name",
                         "in": "formData"
                     }
                 ],
                 "responses": {}
             }
         },
-        "/cocktails": {
+        "/cocktail:id": {
+            "get": {
+                "description": "get one IBA Cocktail",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "get Cocktail by Id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Id cocktail",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            },
+            "delete": {
+                "description": "Delete One IBA Cocktail",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Delete Cocktail by Id",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Id cocktail",
+                        "name": "id",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {}
+            }
+        },
+        "/cocktails/:id": {
             "get": {
                 "description": "List IBA Cocktails",
                 "consumes": [
@@ -77,6 +108,31 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "summary": "List Cocktails",
+                "responses": {}
+            }
+        },
+        "/login": {
+            "post": {
+                "description": "Request Login",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "summary": "Login",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "name": "email",
+                        "in": "formData"
+                    },
+                    {
+                        "type": "string",
+                        "name": "password",
+                        "in": "formData"
+                    }
+                ],
                 "responses": {}
             }
         }

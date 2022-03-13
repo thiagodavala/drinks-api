@@ -3,39 +3,60 @@ info:
   contact: {}
 paths:
   /cocktail:
-    get:
-      consumes:
-      - application/json
-      description: get one IBA Cocktail
-      produces:
-      - application/json
-      responses: {}
-      summary: get Cocktail by Id
-    post:
+    put:
       consumes:
       - application/json
       description: Add IBA Cocktail
       parameters:
       - in: formData
-        name: garnish
+        name: Garnish
         type: string
       - in: formData
-        name: id
+        name: Id
         type: integer
       - in: formData
-        name: ingredients
+        name: Ingredients
         type: string
       - in: formData
-        name: method
+        name: Method
         type: string
       - in: formData
-        name: name
+        name: Name
         type: string
       produces:
       - application/json
       responses: {}
       summary: Add Cocktail
-  /cocktails:
+  /cocktail:id:
+    delete:
+      consumes:
+      - application/json
+      description: Delete One IBA Cocktail
+      parameters:
+      - description: Id cocktail
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      summary: Delete Cocktail by Id
+    get:
+      consumes:
+      - application/json
+      description: get one IBA Cocktail
+      parameters:
+      - description: Id cocktail
+        in: query
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      summary: get Cocktail by Id
+  /cocktails/:id:
     get:
       consumes:
       - application/json
@@ -44,4 +65,20 @@ paths:
       - application/json
       responses: {}
       summary: List Cocktails
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Request Login
+      parameters:
+      - in: formData
+        name: email
+        type: integer
+      - in: formData
+        name: password
+        type: string
+      produces:
+      - application/json
+      responses: {}
+      summary: Login
 swagger: "2.0"

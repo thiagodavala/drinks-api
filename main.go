@@ -1,37 +1,82 @@
 package main
 
 import (
-	"database/sql"
+	"bytes"
+	"drinks-api/config"
+	"drinks-api/middleware"
+	"drinks-api/models"
+	"encoding/json"
+	"io/ioutil"
+	"log"
 	"net/http"
 
 	swaggerfiles "github.com/swaggo/files"
 
 	_ "drinks-api/docs"
 
-	"os"
-
 	"github.com/gin-gonic/gin"
 	_ "github.com/go-sql-driver/mysql"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-type cocktail struct {
-	ID          int    `json:"Id"`
-	Name        string `json:"Name"`
-	Ingredients string `json:"Ingredients"`
-	Method      string `json:"Method"`
-	Garnish     string `json:"Garnish"`
-}
-
 // @BasePath /
-
 func main() {
 	router := gin.Default()
-	router.GET("/cocktails", getCocktails)
-	router.GET("/cocktail/:id", getCocktailById)
-	router.POST("/cocktail", addCocktail)
+
+	// configure firebase
+	firebaseAuth := config.SetupFirebase()
+	router.Use(func(c *gin.Context) {
+		c.Set("firebaseAuth", firebaseAuth)
+	})
+
+	//router.Use(middleware.AuthMiddleware)
+
+	router.GET("/cocktails", middleware.AuthMiddleware, getCocktails)
+	router.GET("/cocktail/:id", middleware.AuthMiddleware, getCocktailById)
+	router.DELETE("/cocktail/:id", middleware.AuthMiddleware, deleteCocktailById)
+	router.PUT("/cocktail", middleware.AuthMiddleware, addCocktail)
+	router.POST("/login", getLogin)
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	router.Run(":8080")
+}
+
+// @Summary Login
+// @Schemes
+// @Description Request Login
+// @Param user formData models.User true "Usuario"
+// @Accept json
+// @Produce json
+// @Router /login [post]
+func getLogin(c *gin.Context) {
+
+	var user models.User
+
+	if err := c.BindJSON(&user); err != nil {
+		c.AbortWithStatus(http.StatusBadRequest)
+	} else {
+		result := validateUser(user)
+		c.IndentedJSON(http.StatusOK, result)
+	}
+
+}
+
+func validateUser(user models.User) string {
+
+	body, _ := json.Marshal(user)
+	resp, err := http.Post("https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyA5R-e2FH2FOZkN-RBNHARBDvO1rlagmT8", "application/json", bytes.NewBuffer(body))
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer resp.Body.Close()
+
+	corpo, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return string(corpo)
 }
 
 // @Summary List Cocktails
@@ -39,39 +84,15 @@ func main() {
 // @Description List IBA Cocktails
 // @Accept json
 // @Produce json
-// @Router /cocktails [get]
+// @Router /cocktails/:id [get]
 func getCocktails(c *gin.Context) {
+	cocktails := models.GetAllCocktails()
 
-	hostname := os.Getenv("DB_HOSTNAME")
-	password := os.Getenv("DB_PASSWORD")
-	user := os.Getenv("DB_USER")
-	database := os.Getenv("DB_DATABASE")
-
-	db, err := sql.Open("mysql", user+":"+password+"@tcp("+hostname+":3306)/"+database)
-
-	// if there is an error opening the connection, handle it
-	if err != nil {
-		print(err.Error())
+	if cocktails == nil {
+		c.AbortWithStatus(http.StatusNotFound)
+	} else {
+		c.IndentedJSON(http.StatusOK, cocktails)
 	}
-	defer db.Close()
-
-	// Execute the query
-	results, err := db.Query("SELECT id, name, ingredients, method, garnish FROM cocktails")
-	if err != nil {
-		panic(err.Error())
-	}
-
-	var list []cocktail
-
-	for results.Next() {
-		item := cocktail{0, "ooo", "ooo", "ooo", "oo"}
-		err = results.Scan(&item.ID, &item.Name, &item.Ingredients, &item.Method, &item.Garnish)
-		if err != nil {
-			panic(err.Error())
-		}
-		list = append(list, item)
-	}
-	c.IndentedJSON(http.StatusOK, list)
 }
 
 // @Summary get Cocktail by Id
@@ -79,55 +100,55 @@ func getCocktails(c *gin.Context) {
 // @Description get one IBA Cocktail
 // @Accept json
 // @Produce json
-// @Router /cocktail [get]
+// @Param id query int true "Id cocktail"
+// @Router /cocktail:id [get]
 func getCocktailById(c *gin.Context) {
 
+	id := c.Param("id")
+
+	ck := models.GetCocktail(id)
+
+	if ck == nil {
+		c.AbortWithStatus(http.StatusNotFound)
+	} else {
+		c.IndentedJSON(http.StatusOK, ck)
+	}
 }
 
 // @Summary Add Cocktail
 // @Schemes
 // @Description Add IBA Cocktail
-// @Param cocktail formData cocktail true "Object Cocktail"
+// @Param cocktail formData models.Cocktail true "Object Cocktail"
 // @Accept application/json
 // @Produce application/json
-// @Router /cocktail [post]
+// @Router /cocktail [put]
 func addCocktail(c *gin.Context) {
-	var ck cocktail
+	var ck models.Cocktail
 
 	if err := c.BindJSON(&ck); err != nil {
 		c.AbortWithStatus(http.StatusBadRequest)
 	} else {
-		addCocktailDB(ck)
+		models.AddCocktailDB(ck)
 		c.IndentedJSON(http.StatusCreated, ck)
 	}
 }
 
-func addCocktailDB(cocktail cocktail) {
+// @Summary Delete Cocktail by Id
+// @Schemes
+// @Description Delete One IBA Cocktail
+// @Accept json
+// @Produce json
+// @Param id query int true "Id cocktail"
+// @Router /cocktail:id [delete]
+func deleteCocktailById(c *gin.Context) {
 
-	hostname := os.Getenv("DB_HOSTNAME")
-	password := os.Getenv("DB_PASSWORD")
-	user := os.Getenv("DB_USER")
-	database := os.Getenv("DB_DATABASE")
+	id := c.Param("id")
 
-	db, err := sql.Open("mysql", user+":"+password+"@tcp("+hostname+":3306)/"+database)
+	ck := models.DeleteCocktail(id)
 
-	if err != nil {
-		panic(err.Error())
+	if ck == nil {
+		c.AbortWithStatus(http.StatusNotFound)
+	} else {
+		c.IndentedJSON(http.StatusOK, ck)
 	}
-
-	// defer the close till after this function has finished
-	// executing
-	defer db.Close()
-
-	insert, err := db.Query(
-		"INSERT INTO cocktails (name,ingredients,method,garnish) VALUES (?,?,?,?)",
-		cocktail.Name, cocktail.Ingredients, cocktail.Method, cocktail.Garnish)
-
-	// if there is an error inserting, handle it
-	if err != nil {
-		panic(err.Error())
-	}
-
-	defer insert.Close()
-
 }
