@@ -20,7 +20,7 @@ const docTemplate = `{
             "put": {
                 "security": [
                     {
-                        "Bearer": []
+                        "AuthToken": []
                     }
                 ],
                 "description": "Add IBA Cocktail",
@@ -56,23 +56,16 @@ const docTemplate = `{
                         "type": "string",
                         "name": "Name",
                         "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "description": "Authorization",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
                     }
                 ],
                 "responses": {}
             }
         },
-        "/cocktail:id": {
+        "/cocktail/{id}": {
             "get": {
                 "security": [
                     {
-                        "Bearer": []
+                        "AuthToken": []
                     }
                 ],
                 "description": "get one IBA Cocktail",
@@ -88,14 +81,7 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "Id cocktail",
                         "name": "id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Authorization",
-                        "name": "Authorization",
-                        "in": "header",
+                        "in": "path",
                         "required": true
                     }
                 ],
@@ -104,7 +90,7 @@ const docTemplate = `{
             "delete": {
                 "security": [
                     {
-                        "Bearer": []
+                        "AuthToken": []
                     }
                 ],
                 "description": "Delete One IBA Cocktail",
@@ -120,25 +106,18 @@ const docTemplate = `{
                         "type": "integer",
                         "description": "Id cocktail",
                         "name": "id",
-                        "in": "query",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "Authorization",
-                        "name": "Authorization",
-                        "in": "header",
+                        "in": "path",
                         "required": true
                     }
                 ],
                 "responses": {}
             }
         },
-        "/cocktails/:id": {
+        "/cocktails": {
             "get": {
                 "security": [
                     {
-                        "Bearer": []
+                        "AuthToken": []
                     }
                 ],
                 "description": "List IBA Cocktails",
@@ -149,15 +128,6 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "summary": "List Cocktails",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Authorization",
-                        "name": "Authorization",
-                        "in": "header",
-                        "required": true
-                    }
-                ],
                 "responses": {}
             }
         },
@@ -173,22 +143,38 @@ const docTemplate = `{
                 "summary": "Login",
                 "parameters": [
                     {
-                        "type": "string",
-                        "name": "email",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "name": "password",
-                        "in": "formData"
+                        "description": "User auth data",
+                        "name": "user",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.User"
+                        }
                     }
                 ],
                 "responses": {}
             }
         }
     },
+    "definitions": {
+        "models.User": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "returnSecureToken": {
+                    "type": "string",
+                    "default": "true"
+                }
+            }
+        }
+    },
     "securityDefinitions": {
-        "": {
+        "AuthToken": {
             "type": "apiKey",
             "name": "Authorization",
             "in": "header"

@@ -1,4 +1,15 @@
 basePath: /
+definitions:
+  models.User:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      returnSecureToken:
+        default: "true"
+        type: string
+    type: object
 info:
   contact: {}
 paths:
@@ -23,38 +34,28 @@ paths:
       - in: formData
         name: Name
         type: string
-      - description: Authorization
-        in: header
-        name: Authorization
-        required: true
-        type: string
       produces:
       - application/json
       responses: {}
       security:
-      - Bearer: []
+      - AuthToken: []
       summary: Add Cocktail
-  /cocktail:id:
+  /cocktail/{id}:
     delete:
       consumes:
       - application/json
       description: Delete One IBA Cocktail
       parameters:
       - description: Id cocktail
-        in: query
+        in: path
         name: id
         required: true
         type: integer
-      - description: Authorization
-        in: header
-        name: Authorization
-        required: true
-        type: string
       produces:
       - application/json
       responses: {}
       security:
-      - Bearer: []
+      - AuthToken: []
       summary: Delete Cocktail by Id
     get:
       consumes:
@@ -62,37 +63,26 @@ paths:
       description: get one IBA Cocktail
       parameters:
       - description: Id cocktail
-        in: query
+        in: path
         name: id
         required: true
         type: integer
-      - description: Authorization
-        in: header
-        name: Authorization
-        required: true
-        type: string
       produces:
       - application/json
       responses: {}
       security:
-      - Bearer: []
+      - AuthToken: []
       summary: get Cocktail by Id
-  /cocktails/:id:
+  /cocktails:
     get:
       consumes:
       - application/json
       description: List IBA Cocktails
-      parameters:
-      - description: Authorization
-        in: header
-        name: Authorization
-        required: true
-        type: string
       produces:
       - application/json
       responses: {}
       security:
-      - Bearer: []
+      - AuthToken: []
       summary: List Cocktails
   /login:
     post:
@@ -100,18 +90,18 @@ paths:
       - application/json
       description: Request Login
       parameters:
-      - in: formData
-        name: email
-        type: string
-      - in: formData
-        name: password
-        type: string
+      - description: User auth data
+        in: body
+        name: user
+        required: true
+        schema:
+          $ref: '#/definitions/models.User'
       produces:
       - application/json
       responses: {}
       summary: Login
 securityDefinitions:
-  "":
+  AuthToken:
     in: header
     name: Authorization
     type: apiKey

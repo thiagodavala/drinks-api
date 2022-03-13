@@ -1,13 +1,10 @@
 package main
 
 import (
-	"bytes"
 	"drinks-api/config"
 	"drinks-api/middleware"
 	"drinks-api/models"
-	"encoding/json"
-	"io/ioutil"
-	"log"
+	"drinks-api/utils"
 	"net/http"
 
 	swaggerfiles "github.com/swaggo/files"
@@ -19,7 +16,7 @@ import (
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-// @securityDefinitions.apikey
+// @securitydefinitions.apikey AuthToken
 // @in header
 // @name Authorization
 // @BasePath /
@@ -46,9 +43,9 @@ func main() {
 // @Summary Login
 // @Schemes
 // @Description Request Login
-// @Param user formData models.User true "Usuario"
-// @Accept json
-// @Produce json
+// @Param  user body models.User true "User auth data"
+// @Accept  json
+// @Produce  json
 // @Router /login [post]
 func getLogin(c *gin.Context) {
 
@@ -57,29 +54,11 @@ func getLogin(c *gin.Context) {
 	if err := c.BindJSON(&user); err != nil {
 		c.AbortWithStatus(http.StatusBadRequest)
 	} else {
-		result := validateUser(user)
+		user.ReturnSecureToken = "true"
+		result := utils.ValidateUser(user)
 		c.IndentedJSON(http.StatusOK, result)
 	}
 
-}
-
-func validateUser(user models.User) string {
-
-	body, _ := json.Marshal(user)
-	resp, err := http.Post("https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyA5R-e2FH2FOZkN-RBNHARBDvO1rlagmT8", "application/json", bytes.NewBuffer(body))
-
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	defer resp.Body.Close()
-
-	corpo, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	return string(corpo)
 }
 
 // @Summary List Cocktails
@@ -87,9 +66,8 @@ func validateUser(user models.User) string {
 // @Description List IBA Cocktails
 // @Accept json
 // @Produce json
-// @param Authorization header string true "Authorization"
-// @Security Bearer
-// @Router /cocktails/:id [get]
+// @security AuthToken
+// @Router /cocktails [get]
 func getCocktails(c *gin.Context) {
 	cocktails := models.GetAllCocktails()
 
@@ -105,10 +83,9 @@ func getCocktails(c *gin.Context) {
 // @Description get one IBA Cocktail
 // @Accept json
 // @Produce json
-// @Param id query int true "Id cocktail"
-// @param Authorization header string true "Authorization"
-// @Security Bearer
-// @Router /cocktail:id [get]
+// @Param id path int true "Id cocktail"
+// @security AuthToken
+// @Router /cocktail/{id} [get]
 func getCocktailById(c *gin.Context) {
 
 	id := c.Param("id")
@@ -126,10 +103,9 @@ func getCocktailById(c *gin.Context) {
 // @Schemes
 // @Description Add IBA Cocktail
 // @Param cocktail formData models.Cocktail true "Object Cocktail"
-// @param Authorization header string true "Authorization"
+// @security AuthToken
 // @Accept application/json
 // @Produce application/json
-// @Security Bearer
 // @Router /cocktail [put]
 func addCocktail(c *gin.Context) {
 	var ck models.Cocktail
@@ -147,10 +123,9 @@ func addCocktail(c *gin.Context) {
 // @Description Delete One IBA Cocktail
 // @Accept json
 // @Produce json
-// @Param id query int true "Id cocktail"
-// @param Authorization header string true "Authorization"
-// @Security Bearer
-// @Router /cocktail:id [delete]
+// @Param id path int true "Id cocktail"
+// @security AuthToken
+// @Router /cocktail/{id} [delete]
 func deleteCocktailById(c *gin.Context) {
 
 	id := c.Param("id")
